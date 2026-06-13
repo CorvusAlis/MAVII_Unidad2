@@ -10,10 +10,9 @@ class Proyectil
 private:
 
     b2Body* body;
-
     float radio;
-
     Color color;
+    b2Vec2 impulso;
 
 public:
 
@@ -26,8 +25,9 @@ public:
     );
 
     void Update();
-
     void Draw();
+
+    void ApplyImpulse(float x, float y);
 
     b2Body* GetBody();
 };

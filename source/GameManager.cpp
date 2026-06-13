@@ -21,15 +21,17 @@ void GameManager::Update()
 
     if (IsKeyPressed(KEY_SPACE))
     {
-        proyectiles.push_back(
-            new Proyectil(
-                *world,
-                100,
-                100,
-                20,
-                RED
-            )
+        Proyectil* nuevo = new Proyectil(
+            *world,
+            100,
+            450,
+            20,
+            RED
         );
+
+        nuevo->ApplyImpulse(8.0f,-6.0f);   //aplico impulso contra la gravedad con componente Y negativo
+
+        proyectiles.push_back(nuevo);
     }
 }
 
@@ -37,9 +39,9 @@ void GameManager::Draw()
 {
     BeginDrawing();
 
+    #pragma region fondo
     ClearBackground(RAYWHITE);
 
-    //fondo
     Rectangle source = {
         0,
         0,
@@ -62,6 +64,7 @@ void GameManager::Draw()
         0.0f,
         WHITE
     );
+#pragma endregion
 
     for (auto proyectil : proyectiles)
     {
@@ -79,7 +82,7 @@ GameManager::~GameManager()
 }
 
 void GameManager::CreateGround() {
-    //Suelo estático - marca el espacio con el que los elementos interactuan != del suelo visual
+    //suelo estático - marca el espacio con el que los elementos interactuan != del suelo visual
     b2BodyDef groundDef;
     groundDef.type = b2_staticBody;
     groundDef.position.Set(
@@ -94,6 +97,5 @@ void GameManager::CreateGround() {
     );
 
     groundBody = world->CreateBody(&groundDef);
-
     groundBody->CreateFixture(&groundShape, 0.0f);
 }

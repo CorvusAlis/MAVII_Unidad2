@@ -12,12 +12,10 @@ Proyectil::Proyectil(
     this->radio = radio;
     this->color = color;
 
-    // Body
+    //body
 
     b2BodyDef bodyDef;
-
     bodyDef.type = b2_dynamicBody;
-
     bodyDef.position.Set(
         x / SCALE,
         y / SCALE
@@ -25,23 +23,16 @@ Proyectil::Proyectil(
 
     body = world.CreateBody(&bodyDef);
 
-    // Shape
-
+    //shape
     b2CircleShape circleShape;
+    circleShape.m_radius = radio / SCALE;
 
-    circleShape.m_radius =
-        radio / SCALE;
-
-    // Fixture
-
+    //fixture
     b2FixtureDef fixtureDef;
 
     fixtureDef.shape = &circleShape;
-
     fixtureDef.density = 1.0f;
-
     fixtureDef.friction = 0.3f;
-
     fixtureDef.restitution = 0.5f;
 
     body->CreateFixture(&fixtureDef);
@@ -60,6 +51,14 @@ void Proyectil::Draw()
         (int)(pos.y * SCALE),
         radio,
         color
+    );
+}
+
+void Proyectil::ApplyImpulse(float x,float y)
+{
+    body->ApplyLinearImpulseToCenter(
+        b2Vec2(x, y),
+        true
     );
 }
 
