@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Proyectil.h"
+#include "Catapulta.h"
 
 class GameManager
 {
@@ -24,6 +25,7 @@ private:
     vector<Proyectil*> proyectiles;
     float impulsoActual;
 
+    Catapulta* catapulta;
 
 public:
 

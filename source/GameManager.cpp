@@ -2,6 +2,7 @@
 #include "GameManager.h"
 #include "Constantes.h"
 #include "Proyectil.h"
+#include "Catapulta.h"
 
 using namespace std;
 
@@ -14,6 +15,11 @@ GameManager::GameManager()
     CreateGround();
 
     impulsoActual = 8.0f;
+
+    catapulta = new Catapulta(
+        PROYECTIL_SPAWN_X - 15,
+        PROYECTIL_SPAWN_Y + 15
+    );
 }
 
 void GameManager::Update()
@@ -35,15 +41,18 @@ void GameManager::Update()
     //lanzamiento del proyectil con el impulso ajustado
     if (IsKeyPressed(KEY_SPACE))
     {
+        Vector2 spawn = catapulta->GetPosicionProyectil(impulsoActual);
+
         Proyectil* nuevo = new Proyectil(
             *world,
-            PROYECTIL_SPAWN_X,
-            PROYECTIL_SPAWN_Y,
+            spawn.x,
+            spawn.y,
             PROYECTIL_RADIO,
             PROYECTIL_COLOR
         );
 
-        nuevo->ApplyImpulse(impulsoActual,IMPULSO_Y);   //aplico impulso contra la gravedad con componente Y negativo
+        b2Vec2 impulso = catapulta->GetImpulso(impulsoActual);
+        nuevo->ApplyImpulse(impulso.x, impulso.y);
 
         proyectiles.push_back(nuevo);
     }
@@ -83,10 +92,13 @@ void GameManager::Draw()
     );
 #pragma endregion
 
-    //render el proyectil en espera
+    catapulta->Draw(impulsoActual);
+
+    Vector2 proyectilEnEspera = catapulta->GetPosicionProyectil(impulsoActual);
+
     DrawCircle(
-        PROYECTIL_SPAWN_X,
-        PROYECTIL_SPAWN_Y,
+        (int)proyectilEnEspera.x,
+        (int)proyectilEnEspera.y,
         PROYECTIL_RADIO,
         PROYECTIL_COLOR
     );
@@ -109,6 +121,11 @@ void GameManager::Draw()
 
 GameManager::~GameManager()
 {
+    for (auto proyectil : proyectiles)
+    {
+        delete proyectil;
+    }
+    delete catapulta;
     delete world;
     UnloadTexture(background);
 }

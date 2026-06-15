@@ -154,12 +154,14 @@ xcopy "$(SolutionDir)..\lib\vld\64-bit\Microsoft.DTfW.DHL.manifest" "$(OutDir)" 
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Catapulta.cpp" />
     <ClCompile Include="Constantes.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Proyectil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Catapulta.h" />
     <ClInclude Include="Constantes.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Proyectil.h" />
