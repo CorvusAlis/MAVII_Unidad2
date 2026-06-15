@@ -1,3 +1,4 @@
+#include "Raylib.h"
 #include "GameManager.h"
 #include "Constantes.h"
 #include "Proyectil.h"
@@ -8,31 +9,47 @@ GameManager::GameManager()
 {
     background = LoadTexture("assets/fondo_cm.png");
 
-    world = new b2World(
-        b2Vec2(0.0f, 9.8f)  //gravedad del mundo
-    );
+    world = new b2World(b2Vec2(0.0f, 9.8f));
 
     CreateGround();
+
+    impulsoActual = 8.0f;
 }
 
 void GameManager::Update()
 {
-    world->Step(1.0f / 60.0f, 8, 3);
+    //control de impulso - primero ajusto el impuslo del proyectil
+    if (IsKeyPressed(KEY_RIGHT))
+    {
+        impulsoActual += IMPULSO_STEP;
+    }
 
+    if (IsKeyPressed(KEY_LEFT))
+    {
+        impulsoActual -= IMPULSO_STEP;
+    }
+
+    if (impulsoActual > IMPULSO_MAX) impulsoActual = IMPULSO_MAX;
+    if (impulsoActual < IMPULSO_MIN) impulsoActual = IMPULSO_MIN;
+
+    //lanzamiento del proyectil con el impulso ajustado
     if (IsKeyPressed(KEY_SPACE))
     {
         Proyectil* nuevo = new Proyectil(
             *world,
-            100,
-            450,
-            20,
-            RED
+            PROYECTIL_SPAWN_X,
+            PROYECTIL_SPAWN_Y,
+            PROYECTIL_RADIO,
+            PROYECTIL_COLOR
         );
 
-        nuevo->ApplyImpulse(8.0f,-6.0f);   //aplico impulso contra la gravedad con componente Y negativo
+        nuevo->ApplyImpulse(impulsoActual,IMPULSO_Y);   //aplico impulso contra la gravedad con componente Y negativo
 
         proyectiles.push_back(nuevo);
     }
+
+    //update general del mundo
+    world->Step(1.0f / 60.0f, 8, 3);
 }
 
 void GameManager::Draw()
@@ -66,10 +83,26 @@ void GameManager::Draw()
     );
 #pragma endregion
 
+    //render el proyectil en espera
+    DrawCircle(
+        PROYECTIL_SPAWN_X,
+        PROYECTIL_SPAWN_Y,
+        PROYECTIL_RADIO,
+        PROYECTIL_COLOR
+    );
+
     for (auto proyectil : proyectiles)
     {
         proyectil->Draw();
     }
+
+    DrawText(
+        TextFormat("Potencia: %.0f", impulsoActual),
+        20,
+        20,
+        20,
+        BLACK
+    );
 
     EndDrawing();
 }
@@ -77,7 +110,6 @@ void GameManager::Draw()
 GameManager::~GameManager()
 {
     delete world;
-
     UnloadTexture(background);
 }
 
