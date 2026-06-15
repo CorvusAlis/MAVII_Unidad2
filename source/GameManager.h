@@ -21,6 +21,7 @@ private:
 
     b2World* world;
     b2Body* groundBody;
+    b2Body* wallBody;
 
     vector<Proyectil*> proyectiles;
     float impulsoActual;
@@ -36,4 +37,5 @@ public:
     void Draw();
 
     void CreateGround();
+    void CreateWall();
 };

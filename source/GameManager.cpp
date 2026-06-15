@@ -13,6 +13,7 @@ GameManager::GameManager()
     world = new b2World(b2Vec2(0.0f, 9.8f));
 
     CreateGround();
+    CreateWall();
 
     impulsoActual = 8.0f;
 
@@ -25,12 +26,12 @@ GameManager::GameManager()
 void GameManager::Update()
 {
     //control de impulso - primero ajusto el impuslo del proyectil
-    if (IsKeyPressed(KEY_RIGHT))
+    if (IsKeyDown(KEY_RIGHT))
     {
         impulsoActual += IMPULSO_STEP;
     }
 
-    if (IsKeyPressed(KEY_LEFT))
+    if (IsKeyDown(KEY_LEFT))
     {
         impulsoActual -= IMPULSO_STEP;
     }
@@ -96,6 +97,7 @@ void GameManager::Draw()
 
     Vector2 proyectilEnEspera = catapulta->GetPosicionProyectil(impulsoActual);
 
+    //proyectil en espera a ser lanzado
     DrawCircle(
         (int)proyectilEnEspera.x,
         (int)proyectilEnEspera.y,
@@ -108,6 +110,16 @@ void GameManager::Draw()
         proyectil->Draw();
     }
 
+    //pared - tomo las medidas como el centro del render, para coincidir con BoxD2 - ver  wallDef.position.Set
+    DrawRectangle(
+        WALL_X - WALL_WIDTH / 2,
+        WALL_Y - WALL_HEIGHT / 2,
+        WALL_WIDTH,
+        WALL_HEIGHT,
+        GRAY
+    );
+
+    //HUD
     DrawText(
         TextFormat("Potencia: %.0f", impulsoActual),
         20,
@@ -147,4 +159,30 @@ void GameManager::CreateGround() {
 
     groundBody = world->CreateBody(&groundDef);
     groundBody->CreateFixture(&groundShape, 0.0f);
+}
+
+void GameManager::CreateWall()
+{
+    b2BodyDef wallDef;
+    wallDef.type = b2_staticBody;
+
+    wallDef.position.Set(
+        WALL_X / SCALE,
+        WALL_Y / SCALE
+    );  //INDICA EL CENTRO DEL CUERPO - VER EN EL RENDER
+
+    b2PolygonShape wallShape;
+
+    wallShape.SetAsBox(
+        (WALL_WIDTH/ 2.0f) / SCALE, 
+        (WALL_HEIGHT/ 2.0f) / SCALE
+    );  //USA HALF WIDTH, TODOS LOS VALORES DEBEN IR DIVIDIDOS EN 2
+
+    b2Body* wallBody =
+        world->CreateBody(&wallDef);
+
+    wallBody->CreateFixture(
+        &wallShape,
+        0.0f
+    );
 }

@@ -20,8 +20,14 @@ const Color PROYECTIL_COLOR = DARKGRAY;
 const float IMPULSO_X = 8.0f;
 const float IMPULSO_Y = -6.0f;
 
+//catapulta
 const float IMPULSO_MIN = 2.0f;
 const float IMPULSO_MAX = 50.0f;
-const float IMPULSO_STEP = 1.0f;
+const float IMPULSO_STEP = 0.5f;
+
+const float WALL_X = 600;
+const float WALL_Y = 250;
+const float WALL_WIDTH = 30;
+const float WALL_HEIGHT = 200;
 
 const bool DEBUG_MODE = false;
